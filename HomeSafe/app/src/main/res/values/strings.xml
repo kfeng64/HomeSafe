@@ -2,4 +2,7 @@
     <string name="app_name">HomeSafe</string>
     <string name="enterTime">Expected Time Home:</string>
     <string name="getHomeBy">Contact friends if not home by: \n</string>
+    <string name="enterNumber">Enter Your Phone Number:</string>
+    <string name="loginButton">Login</string>
+
 </resources>

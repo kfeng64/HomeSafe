@@ -3,6 +3,8 @@ package com.example.kevin.homesafe;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -10,6 +12,7 @@ import android.widget.TimePicker;
 
 
 public class MainActivity extends AppCompatActivity {
+    private User user;
     private TimePicker timePicker1;
     private Switch willContact;
     private TextView time;
@@ -19,8 +22,26 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.login);
 
+        final TextView phoneNumber = findViewById(R.id.phoneNumber);
+
+        final Button button = findViewById(R.id.loginButton);
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                user = new User(phoneNumber.getText().toString());
+                setContentView(R.layout.activity_main);
+                setTime();
+            }
+        });
+
+
+
+
+
+    }
+
+    public void setTime() {
         timePicker1 = findViewById(R.id.timePicker1);
         time = findViewById(R.id.time);
         willContact = findViewById(R.id.switch1);
@@ -38,15 +59,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Log.i("time:", "hour" + hour + " minute" + min);
-
-    }
-
-    protected void getTime() {
-        TimePicker timePicker1 = findViewById(R.id.timePicker1);
-        int hour = timePicker1.getHour();
-        int min = timePicker1.getMinute();
-        Log.i("time:", "hour" + hour + " minute" + min);
+//        Log.i("time:", "hour" + hour + " minute" + min);
     }
 
     public void showTime(int hour, int min) {
