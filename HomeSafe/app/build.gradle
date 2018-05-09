@@ -24,13 +24,15 @@ dependencies {
     implementation 'com.android.support.constraint:constraint-layout:1.1.0'
     implementation 'com.amazonaws:aws-android-sdk-core:2.6.+'
     implementation 'com.amazonaws:aws-android-sdk-apigateway-core:2.6.+'
-    implementation 'com.amazonaws:aws-android-sdk-sdb:2.6.+'
+    implementation 'com.amazonaws:aws-android-sdk-ddb-mapper:2.6.+'
     implementation 'com.amazonaws:aws-android-sdk-lambda:2.6.+'
     implementation 'com.amazonaws:aws-android-sdk-sns:2.6.+'
     implementation 'com.amazonaws:aws-android-sdk-sqs:2.6.+'
     implementation 'com.amazonaws:aws-android-sdk-s3:2.6.+'
+    implementation ('com.amazonaws:aws-android-sdk-mobile-client:2.6.+@aar') { transitive = true }
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation 'com.android.support:design:27.1.1'
 }
+
