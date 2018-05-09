@@ -1,59 +1,37 @@
 package com.example.kevin.homesafe;
 
-import android.app.Activity;
-import android.content.Context;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.Gravity;
-import android.view.LayoutInflater;
+import android.text.InputType;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.PopupWindow;
-import android.widget.RelativeLayout;
+import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
 
 public class MainActivity extends AppCompatActivity {
-    private User user;
+//    private User user;
     private TimePicker timePicker1;
     private Switch willContact;
     private TextView time;
     private int hour, min;
     private String format = "";
+    private String contact[] = new String[4];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.login);
+        setContentView(R.layout.activity_main);
 
-        final TextView name = findViewById(R.id.name);
-
-        final Button button = findViewById(R.id.loginButton);
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                user = new User(name.getText().toString());
-                setContentView(R.layout.activity_main);
-                settingTimePage();
-            }
-        });
-
-    }
-
-    public void settingTimePage() {
         timePicker1 = findViewById(R.id.timePicker1);
         time = findViewById(R.id.time);
         willContact = findViewById(R.id.switch1);
-        final FloatingActionButton addFriend1 = findViewById(R.id.addFriend1);
-        final FloatingActionButton addFriend2 = findViewById(R.id.addFriend2);
-        final FloatingActionButton addFriend3 = findViewById(R.id.addFriend3);
-        final FloatingActionButton addFriend4 = findViewById(R.id.addFriend4);
-
-//        TextView debug =  findViewById(R.id.debug);
-//        debug.setText(user.name);
 
         willContact.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -67,38 +45,122 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+//
+    public void addFriend1(View view) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Enter Contact Number");
 
-        addFriend1.setOnClickListener(new View.OnClickListener() {
+// Set up the input
+        final EditText input = new EditText(this);
+// Specify the type of input expected
+        input.setText(contact[0]);
+        input.setInputType(InputType.TYPE_CLASS_PHONE);
+        builder.setView(input);
+
+// Set up the buttons
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                addFriend(addFriend1);
+            public void onClick(DialogInterface dialog, int which) {
+                contact[0] = input.getText().toString();
             }
         });
-        addFriend2.setOnClickListener(new View.OnClickListener() {
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                addFriend(addFriend2);
-            }
-        });
-        addFriend3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                addFriend(addFriend3);
-            }
-        });
-        addFriend4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                addFriend(addFriend4);
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
             }
         });
 
-
+        builder.show();
 
     }
 
-    public void addFriend(FloatingActionButton friend) {
-        //just do new window
+    public void addFriend2(View view) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Enter Contact Number");
+
+// Set up the input
+        final EditText input = new EditText(this);
+// Specify the type of input expected
+        input.setText(contact[1]);
+        input.setInputType(InputType.TYPE_CLASS_PHONE);
+        builder.setView(input);
+
+// Set up the buttons
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                contact[1] = input.getText().toString();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+
+    }
+
+    public void addFriend3(View view) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Enter Contact Number");
+
+// Set up the input
+        final EditText input = new EditText(this);
+// Specify the type of input expected
+        input.setText(contact[2]);
+        input.setInputType(InputType.TYPE_CLASS_PHONE);
+        builder.setView(input);
+
+// Set up the buttons
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                contact[2] = input.getText().toString();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+
+    }
+
+    public void addFriend4(View view) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Enter Contact Number");
+
+// Set up the input
+        final EditText input = new EditText(this);
+// Specify the type of input expected
+        input.setText(contact[3]);
+        input.setInputType(InputType.TYPE_CLASS_PHONE);
+        builder.setView(input);
+
+// Set up the buttons
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                contact[3] = input.getText().toString();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+
     }
 
     private void showTime(int hour, int min) {

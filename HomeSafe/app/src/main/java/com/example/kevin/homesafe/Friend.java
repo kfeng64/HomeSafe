@@ -3,9 +3,9 @@ package com.example.kevin.homesafe;
 public class Friend {
     protected String name, phoneNumber;
 
-    public Friend (String name, String phoneNumber) {
-        this.name = name;
-        this.phoneNumber = phoneNumber;
+    public Friend () {
+        this.name = "";
+        this.phoneNumber = "";
     }
 
     public String getName() {

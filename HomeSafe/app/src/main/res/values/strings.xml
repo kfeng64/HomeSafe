@@ -5,6 +5,7 @@
     <string name="enterName">Enter Your Name:</string>
     <string name="loginButton">Login</string>
     <string name="addFriends">Add friends to contact</string>
-    <string name="addFriendTitle">Enter friend name:</string>
+    <string name="enterFriendName">Enter Friend\'s Name:</string>
+    <string name="enterFriendNumber">Enter Friend\'s Number:</string>
 
 </resources>
