@@ -1,4 +1,4 @@
-package com.example.kevin.homesafe;
+package com.example.kevin.homesafe2;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -12,11 +12,17 @@ import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
+
+import com.amazonaws.auth.AWSCredentialsProvider;
+import com.amazonaws.mobile.auth.core.IdentityHandler;
+import com.amazonaws.mobile.auth.core.IdentityManager;
 import com.amazonaws.mobile.client.AWSMobileClient;
 import com.amazonaws.mobile.client.AWSStartupHandler;
 import com.amazonaws.mobile.client.AWSStartupResult;
+import com.amazonaws.mobile.config.AWSConfiguration;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
+
 
 
 public class MainActivity extends AppCompatActivity {
@@ -28,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
     private String friends[] = new String[4];
     DynamoDBMapper dynamoDBMapper;
     private String uniqueUserID = "0";
+    private AWSCredentialsProvider credentialsProvider;
+    private AWSConfiguration configuration;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,9 +45,31 @@ public class MainActivity extends AppCompatActivity {
         AWSMobileClient.getInstance().initialize(this, new AWSStartupHandler() {
             @Override
             public void onComplete(AWSStartupResult awsStartupResult) {
-                Log.d("YourMainActivity", "AWSMobileClient is instantiated and you are connected to AWS!");
+
+                // Obtain the reference to the AWSCredentialsProvider and AWSConfiguration objects
+                credentialsProvider = AWSMobileClient.getInstance().getCredentialsProvider();
+                configuration = AWSMobileClient.getInstance().getConfiguration();
+
+                // Use IdentityManager#getUserID to fetch the identity id.
+                IdentityManager.getDefaultIdentityManager().getUserID(new IdentityHandler() {
+                    @Override
+                    public void onIdentityId(String identityId) {
+                        Log.d("YourMainActivity", "Identity ID = " + identityId);
+
+                        // Use IdentityManager#getCachedUserID to
+                        //  fetch the locally cached identity id.
+                        final String cachedIdentityId =
+                                IdentityManager.getDefaultIdentityManager().getCachedUserID();
+                    }
+
+                    @Override
+                    public void handleError(Exception exception) {
+                        Log.d("YourMainActivity", "Error in retrieving the identity" + exception);
+                    }
+                });
             }
         }).execute();
+
 
         AmazonDynamoDBClient dynamoDBClient = new AmazonDynamoDBClient(AWSMobileClient.getInstance().getCredentialsProvider());
         this.dynamoDBMapper = DynamoDBMapper.builder()

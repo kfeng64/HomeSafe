@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">HomeSafe</string>
+    <string name="enterTime">Expected Time Home:</string>
+    <string name="getHomeBy">Contact friends if not home by: \n</string>
+    <string name="enterName">Enter Your Name:</string>
+    <string name="loginButton">Login</string>
+    <string name="addFriends">Add friends to contact</string>
+    <string name="enterFriendName">Enter Friend\'s Name:</string>
+    <string name="enterFriendNumber">Enter Friend\'s Number:</string>
+    <string name="title_activity_authenticator">AuthenticatorActivity</string>
+
+</resources>
