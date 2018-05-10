@@ -45,28 +45,7 @@ public class MainActivity extends AppCompatActivity {
         AWSMobileClient.getInstance().initialize(this, new AWSStartupHandler() {
             @Override
             public void onComplete(AWSStartupResult awsStartupResult) {
-
-                // Obtain the reference to the AWSCredentialsProvider and AWSConfiguration objects
-                credentialsProvider = AWSMobileClient.getInstance().getCredentialsProvider();
-                configuration = AWSMobileClient.getInstance().getConfiguration();
-
-                // Use IdentityManager#getUserID to fetch the identity id.
-                IdentityManager.getDefaultIdentityManager().getUserID(new IdentityHandler() {
-                    @Override
-                    public void onIdentityId(String identityId) {
-                        Log.d("YourMainActivity", "Identity ID = " + identityId);
-
-                        // Use IdentityManager#getCachedUserID to
-                        //  fetch the locally cached identity id.
-                        final String cachedIdentityId =
-                                IdentityManager.getDefaultIdentityManager().getCachedUserID();
-                    }
-
-                    @Override
-                    public void handleError(Exception exception) {
-                        Log.d("YourMainActivity", "Error in retrieving the identity" + exception);
-                    }
-                });
+                Log.d("YourMainActivity", "AWSMobileClient is instantiated and you are connected to AWS!");
             }
         }).execute();
 
@@ -147,6 +126,9 @@ public class MainActivity extends AppCompatActivity {
                 final UserDataDO userItem = new UserDataDO();
                 userItem.setUserId(uniqueUserID);
                 userItem.setFriend1(friends[0]);
+                userItem.setFriend2(friends[1]);
+                userItem.setFriend3(friends[2]);
+                userItem.setFriend4(friends[3]);
 
                 new Thread(new Runnable() {
                     @Override
@@ -197,7 +179,10 @@ public class MainActivity extends AppCompatActivity {
 
                 final UserDataDO userItem = new UserDataDO();
                 userItem.setUserId(uniqueUserID);
+                userItem.setFriend1(friends[0]);
                 userItem.setFriend2(friends[1]);
+                userItem.setFriend3(friends[2]);
+                userItem.setFriend4(friends[3]);
 
                 new Thread(new Runnable() {
                     @Override
@@ -248,7 +233,10 @@ public class MainActivity extends AppCompatActivity {
 
                 final UserDataDO userItem = new UserDataDO();
                 userItem.setUserId(uniqueUserID);
+                userItem.setFriend1(friends[0]);
+                userItem.setFriend2(friends[1]);
                 userItem.setFriend3(friends[2]);
+                userItem.setFriend4(friends[3]);
 
                 new Thread(new Runnable() {
                     @Override
@@ -299,6 +287,9 @@ public class MainActivity extends AppCompatActivity {
 
                 final UserDataDO userItem = new UserDataDO();
                 userItem.setUserId(uniqueUserID);
+                userItem.setFriend1(friends[0]);
+                userItem.setFriend2(friends[1]);
+                userItem.setFriend3(friends[2]);
                 userItem.setFriend4(friends[3]);
 
                 new Thread(new Runnable() {
