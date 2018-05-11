@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.amazonaws.auth.AWSCredentialsProvider;
+import com.amazonaws.http.HttpMethodName;
 import com.amazonaws.mobile.auth.core.IdentityHandler;
 import com.amazonaws.mobile.auth.core.IdentityManager;
 import com.amazonaws.mobile.client.AWSMobileClient;
@@ -22,7 +23,18 @@ import com.amazonaws.mobile.client.AWSStartupResult;
 import com.amazonaws.mobile.config.AWSConfiguration;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
+import com.amazonaws.mobile.api.idxz1n4qn66g.HomeSafeAPIMobileHubClient;
 
+import com.amazonaws.mobile.auth.core.IdentityManager;
+import com.amazonaws.mobile.config.AWSConfiguration;
+import com.amazonaws.mobileconnectors.apigateway.ApiClientFactory;
+import com.amazonaws.mobileconnectors.apigateway.ApiRequest;
+import com.amazonaws.mobileconnectors.apigateway.ApiResponse;
+import com.amazonaws.util.IOUtils;
+import com.amazonaws.util.StringUtils;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -34,8 +46,10 @@ public class MainActivity extends AppCompatActivity {
     private String friends[] = new String[4];
     DynamoDBMapper dynamoDBMapper;
     private String uniqueUserID = "0";
-    private AWSCredentialsProvider credentialsProvider;
-    private AWSConfiguration configuration;
+    private boolean isOut;
+    private static final String LOG_TAG = MainActivity.class.getSimpleName();
+
+    private HomeSafeAPIMobileHubClient apiClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,14 +63,17 @@ public class MainActivity extends AppCompatActivity {
             }
         }).execute();
 
-
         AmazonDynamoDBClient dynamoDBClient = new AmazonDynamoDBClient(AWSMobileClient.getInstance().getCredentialsProvider());
         this.dynamoDBMapper = DynamoDBMapper.builder()
                 .dynamoDBClient(dynamoDBClient)
                 .awsConfiguration(AWSMobileClient.getInstance().getConfiguration())
                 .build();
 
-        //Create single item in DB
+        apiClient = new ApiClientFactory()
+                .credentialsProvider(AWSMobileClient.getInstance().getCredentialsProvider())
+                .build(HomeSafeAPIMobileHubClient.class);
+
+        //Create get single user from DB
         createUserItem();
 
         timePicker1 = findViewById(R.id.timePicker1);
@@ -70,30 +87,100 @@ public class MainActivity extends AppCompatActivity {
                     hour = timePicker1.getHour();
                     min = timePicker1.getMinute();
                     showTime(hour, min);
+                    isOut = true;
+                    callCloudLogic();
                 } else {
                     time.setText("");
+                    isOut = false;
                 }
+
+                updateUser(friends, isOut);
+
             }
         });
+
+
+
     }
 
-    public void createUserItem() {
-        final UserDataDO userItem = new UserDataDO();
+    public void callCloudLogic() {
+        // Create components of api request
+        final String method = "GET";
 
-        userItem.setUserId(uniqueUserID);
+        final String path = "/friends";
 
-        userItem.setFriend1("");
-        userItem.setFriend1("");
-        userItem.setFriend1("");
-        userItem.setFriend1("");
+        final String body = "";
+        final byte[] content = body.getBytes(StringUtils.UTF8);
 
+        final Map parameters = new HashMap<>();
+        parameters.put("lang", "en_US");
+
+        final Map headers = new HashMap<>();
+
+        // Use components to create the api request
+        ApiRequest localRequest =
+                new ApiRequest(apiClient.getClass().getSimpleName())
+                        .withPath(path)
+                        .withHttpMethod(HttpMethodName.valueOf(method))
+                        .withHeaders(headers)
+                        .addHeader("Content-Type", "application/json")
+                        .withParameters(parameters);
+
+        // Only set body if it has content.
+        if (body.length() > 0) {
+            localRequest = localRequest
+                    .addHeader("Content-Length", String.valueOf(content.length))
+                    .withBody(content);
+        }
+
+        final ApiRequest request = localRequest;
+
+        // Make network call on background thread
         new Thread(new Runnable() {
             @Override
             public void run() {
-                dynamoDBMapper.save(userItem);
-                // Item saved
+                try {
+                    Log.d(LOG_TAG,
+                            "Invoking API w/ Request : " +
+                                    request.getHttpMethod() + ":" +
+                                    request.getPath());
+
+                    final ApiResponse response = apiClient.execute(request);
+
+                    final InputStream responseContentStream = response.getContent();
+
+                    if (responseContentStream != null) {
+                        final String responseData = IOUtils.toString(responseContentStream);
+                        Log.d(LOG_TAG, "Response : " + responseData);
+                    }
+
+                    Log.d(LOG_TAG, response.getStatusCode() + " " + response.getStatusText());
+
+                } catch (final Exception exception) {
+                    Log.e(LOG_TAG, exception.getMessage(), exception);
+                    exception.printStackTrace();
+                }
             }
         }).start();
+    }
+
+    public void createUserItem() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                UserDataDO userItem = dynamoDBMapper.load(
+                        UserDataDO.class,
+                        uniqueUserID);
+
+                friends[0] = userItem.getFriend1();
+                friends[1] = userItem.getFriend2();
+                friends[2] = userItem.getFriend3();
+                friends[3] = userItem.getFriend4();
+                isOut = userItem.getIsOut();
+            }
+        }).start();
+
     }
 
     public void addFriend1(View view) {
@@ -123,20 +210,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 friends[0] = input.getText().toString();
 
-                final UserDataDO userItem = new UserDataDO();
-                userItem.setUserId(uniqueUserID);
-                userItem.setFriend1(friends[0]);
-                userItem.setFriend2(friends[1]);
-                userItem.setFriend3(friends[2]);
-                userItem.setFriend4(friends[3]);
-
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        dynamoDBMapper.save(userItem);
-
-                    }
-                }).start();
+                updateUser(friends, isOut);
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -177,20 +251,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 friends[1] = input.getText().toString();
 
-                final UserDataDO userItem = new UserDataDO();
-                userItem.setUserId(uniqueUserID);
-                userItem.setFriend1(friends[0]);
-                userItem.setFriend2(friends[1]);
-                userItem.setFriend3(friends[2]);
-                userItem.setFriend4(friends[3]);
-
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        dynamoDBMapper.save(userItem);
-
-                    }
-                }).start();
+                updateUser(friends, isOut);
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -231,20 +292,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 friends[2] = input.getText().toString();
 
-                final UserDataDO userItem = new UserDataDO();
-                userItem.setUserId(uniqueUserID);
-                userItem.setFriend1(friends[0]);
-                userItem.setFriend2(friends[1]);
-                userItem.setFriend3(friends[2]);
-                userItem.setFriend4(friends[3]);
-
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        dynamoDBMapper.save(userItem);
-
-                    }
-                }).start();
+                updateUser(friends, isOut);
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -285,20 +333,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 friends[3] = input.getText().toString();
 
-                final UserDataDO userItem = new UserDataDO();
-                userItem.setUserId(uniqueUserID);
-                userItem.setFriend1(friends[0]);
-                userItem.setFriend2(friends[1]);
-                userItem.setFriend3(friends[2]);
-                userItem.setFriend4(friends[3]);
-
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        dynamoDBMapper.save(userItem);
-
-                    }
-                }).start();
+                updateUser(friends, isOut);
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -310,6 +345,24 @@ public class MainActivity extends AppCompatActivity {
 
         builder.show();
 
+    }
+
+    private void updateUser(String friends[], boolean isOut) {
+        final UserDataDO userItem = new UserDataDO();
+        userItem.setUserId(uniqueUserID);
+        userItem.setFriend1(friends[0]);
+        userItem.setFriend2(friends[1]);
+        userItem.setFriend3(friends[2]);
+        userItem.setFriend4(friends[3]);
+        userItem.setIsOut(isOut);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                dynamoDBMapper.save(userItem);
+
+            }
+        }).start();
     }
 
     private void showTime(int hour, int min) {

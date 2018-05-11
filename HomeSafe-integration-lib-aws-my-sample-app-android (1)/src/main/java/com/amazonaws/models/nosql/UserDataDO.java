@@ -1,4 +1,4 @@
-package com.example.kevin.homesafe2;
+package com.amazonaws.models.nosql;
 
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBAttribute;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBHashKey;
@@ -19,7 +19,6 @@ public class UserDataDO {
     private String _friend2;
     private String _friend3;
     private String _friend4;
-    private boolean isOut;
 
     @DynamoDBHashKey(attributeName = "userId")
     @DynamoDBAttribute(attributeName = "userId")
@@ -62,16 +61,5 @@ public class UserDataDO {
     public void setFriend4(final String _friend4) {
         this._friend4 = _friend4;
     }
-
-    @DynamoDBAttribute(attributeName = "isOut")
-    public boolean getIsOut() {
-        return isOut;
-    }
-
-    public void setIsOut(final boolean isOut) {
-        this.isOut = isOut;
-    }
-
-
 
 }
