@@ -61,9 +61,6 @@ public class MainActivity extends AppCompatActivity {
                 .credentialsProvider(AWSMobileClient.getInstance().getCredentialsProvider())
                 .build(HomeSafeAPIMobileHubClient.class);
 
-        //Get user's name
-        userName();
-
         //Create get single user from DB
         createUserItem();
 
@@ -84,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
                     isOut = false;
                 }
 
-                updateUser(friends, isOut, hour, min);
+                updateUser(name, friends, isOut, hour, min);
 
             }
         });
@@ -92,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void createUserItem() {
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -100,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
                         UserDataDO.class,
                         uniqueUserID);
 
+                name = userItem.getName();
                 friends[0] = userItem.getFriend1();
                 friends[1] = userItem.getFriend2();
                 friends[2] = userItem.getFriend3();
@@ -141,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 friends[0] = input.getText().toString();
 
-                updateUser(friends, isOut, hour, min);
+                updateUser(name, friends, isOut, hour, min);
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -186,7 +185,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 friends[1] = input.getText().toString();
 
-                updateUser(friends, isOut, hour, min);
+                updateUser(name, friends, isOut, hour, min);
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -231,7 +230,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 friends[2] = input.getText().toString();
 
-                updateUser(friends, isOut, hour, min);
+                updateUser(name, friends, isOut, hour, min);
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -276,7 +275,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 friends[3] = input.getText().toString();
 
-                updateUser(friends, isOut, hour, min);
+                updateUser(name, friends, isOut, hour, min);
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -290,7 +289,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void updateUser(String friends[], boolean isOut, int hour, int min) {
+    private void updateUser(String name, String friends[], boolean isOut, int hour, int min) {
         final UserDataDO userItem = new UserDataDO();
         userItem.setUserId(uniqueUserID);
         userItem.setFriend1(friends[0]);
@@ -311,14 +310,29 @@ public class MainActivity extends AppCompatActivity {
         }).start();
     }
 
-    private void userName() {
+    public void userName(View view) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Please Enter Your Name:");
 
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                UserDataDO userItem = dynamoDBMapper.load(
+                        UserDataDO.class,
+                        uniqueUserID);
+
+                name = userItem.getName();
+            }
+        }).start();
+
         final EditText input = new EditText(this);
 
-        String defaultName = "John Smith";
-        input.setText(defaultName);
+        if (name != null) {
+            input.setText(name);
+        } else {
+            input.setText("");
+        }
         input.setInputType(InputType.TYPE_CLASS_TEXT);
         builder.setView(input);
 
@@ -326,6 +340,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 name = input.getText().toString();
+
+                updateUser(name, friends, isOut, hour, min);
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
