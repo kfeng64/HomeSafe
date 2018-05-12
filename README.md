@@ -14,9 +14,9 @@ if they fail to let the app know they have made it home.
 * Lambda
 * Simple Notification Service
 
-Video Demo (Coming Soon!)
+### Video Demo (Coming Soon!)
 
-[Architecture](https://cloudcraft.co/view/0f5ebc96-5a70-4d9d-8c5c-7aa65b27596d?key=U1PLbX7MNWAVLTJ6j6fShg)
+### [Architecture](https://cloudcraft.co/view/0f5ebc96-5a70-4d9d-8c5c-7aa65b27596d?key=U1PLbX7MNWAVLTJ6j6fShg)
 
 ### Recreation
 * Clone/Download Repository
