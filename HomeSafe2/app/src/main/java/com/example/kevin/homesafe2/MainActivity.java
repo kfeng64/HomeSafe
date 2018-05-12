@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private String uniqueUserID = "0";
     private boolean isOut;
     private String name;
+    private String USCode = "+1";
 
     private HomeSafeAPIMobileHubClient apiClient;
 
@@ -127,7 +128,11 @@ public class MainActivity extends AppCompatActivity {
 
         final EditText input = new EditText(this);
 
-        input.setText(friends[0]);
+        if (friends[0] == null) {
+            input.setText(USCode);
+        } else {
+            input.setText(friends[0]);
+        }
         input.setInputType(InputType.TYPE_CLASS_PHONE);
         builder.setView(input);
 
@@ -168,7 +173,11 @@ public class MainActivity extends AppCompatActivity {
 
         final EditText input = new EditText(this);
 
-        input.setText(friends[1]);
+        if (friends[1] == null) {
+            input.setText(USCode);
+        } else {
+            input.setText(friends[1]);
+        }
         input.setInputType(InputType.TYPE_CLASS_PHONE);
         builder.setView(input);
 
@@ -209,7 +218,11 @@ public class MainActivity extends AppCompatActivity {
 
         final EditText input = new EditText(this);
 
-        input.setText(friends[2]);
+        if (friends[2] == null) {
+            input.setText(USCode);
+        } else {
+            input.setText(friends[2]);
+        }
         input.setInputType(InputType.TYPE_CLASS_PHONE);
         builder.setView(input);
 
@@ -250,7 +263,11 @@ public class MainActivity extends AppCompatActivity {
 
         final EditText input = new EditText(this);
 
-        input.setText(friends[3]);
+        if (friends[3] == null) {
+            input.setText(USCode);
+        } else {
+            input.setText(friends[3]);
+        }
         input.setInputType(InputType.TYPE_CLASS_PHONE);
         builder.setView(input);
 
