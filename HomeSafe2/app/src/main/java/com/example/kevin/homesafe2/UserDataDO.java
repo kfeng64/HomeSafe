@@ -20,6 +20,8 @@ public class UserDataDO {
     private String _friend3;
     private String _friend4;
     private boolean isOut;
+    private int hour, min;
+    private String name;
 
     @DynamoDBHashKey(attributeName = "userId")
     @DynamoDBAttribute(attributeName = "userId")
@@ -70,6 +72,33 @@ public class UserDataDO {
 
     public void setIsOut(final boolean isOut) {
         this.isOut = isOut;
+    }
+
+    @DynamoDBAttribute(attributeName = "hour")
+    public int getHour() {
+        return hour;
+    }
+
+    public void setHour(final int hour) {
+        this.hour = hour;
+    }
+
+    @DynamoDBAttribute(attributeName = "min")
+    public int getMin() {
+        return min;
+    }
+
+    public void setMin(final int min) {
+        this.min = min;
+    }
+
+    @DynamoDBAttribute(attributeName = "name")
+    public String getName() {
+        return name;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
     }
 
 
